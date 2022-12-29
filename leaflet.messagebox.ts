@@ -3,7 +3,12 @@
         on(type: 'gis:notify', fn: ((event: Control.MessageEvent) => void), context: Control.Messagebox): Evented;
         fire(type: 'gis:notify', data: Control.MessageEvent, propagate?: boolean): Evented;
     }
-    namespace Control {    
+    export interface MapOptions {
+        messagebox: boolean;
+        messageboxOptions: L.Control.MessageboxOptions
+    }
+
+    export namespace Control {    
         export class MessageboxOptions implements ControlOptions {
             position: ControlPosition = 'bottomcenter'
             timeout: number = 5000
@@ -16,7 +21,7 @@
         }
 
         export class Messagebox extends L.Control {
-            options: MessageboxOptions;
+            override options: MessageboxOptions;
             timeoutID: number;
             _container: HTMLElement;
 
@@ -25,7 +30,7 @@
                 super(options);
                 this.options = options;
             }
-            onAdd(map: Map) {
+            override onAdd(map: Map) {
                 this._container = L.DomUtil.create('div', 'leaflet-control-messagebox');
                 L.DomEvent.disableClickPropagation(this._container);
                 this._container.style.display = 'none';
@@ -64,8 +69,8 @@
             this.addControl(this.messagebox);
         }
     });
-    namespace control { 
-        export function messagebox (options) {
+    export namespace control { 
+        export function messagebox (options: L.Control.MessageboxOptions) {
             return new Control.Messagebox(options);
         }
     }
